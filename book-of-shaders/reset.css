@@ -1,0 +1,54 @@
+/* Réinitialisation de tous les styles par défaut */
+
+body,
+h1, h2, h3, h4, h5, h6,
+p,
+blockquote,
+pre,
+a,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup,
+var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, figure, figcaption, footer, header, hgroup, menu, nav, section, main {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+
+/* Réinitialisation spécifique à certains éléments */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+/* Réinitialisation des styles de liste */
+ol, ul {
+    list-style: none;
+}
+
+/* Réinitialisation des styles du bloc de citation */
+blockquote, q {
+    quotes: none;
+}
+
+/* Réinitialisation des styles du tableau */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* Réinitialisation des éléments imbriqués dans les liens */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Ajoutez vos styles personnalisés ci-dessous cette ligne */
+

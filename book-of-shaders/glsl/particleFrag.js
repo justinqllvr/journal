@@ -3,19 +3,15 @@ const particleFrag = () => {
   precision mediump float;
         
   uniform sampler2D uTexture;
-  uniform sampler2D uTouch;
   varying vec2 vUv;
-  varying vec2 vPUv;
-  varying vec3 vOffset;
   uniform float uTime;
   uniform float scroll;
-  
 
   void main()
   {
-    // vec4 t = texture2D(uTouch, vPUv);
-    vec4 image = texture2D(uTexture, vPUv);
-    gl_FragColor = image;
+    //   vec4 image = texture2D(uTexture, vUv);
+    //   gl_FragColor = image;
+      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
   }
       `;
 };

@@ -5,8 +5,9 @@ import images from "./images/index.js";
 import { gsap } from "gsap";
 import vert from "./glsl/vert.js";
 import frag from "./glsl/frag.js";
-import particleVert from "./glsl/particleVert.js";
-import particleFrag from "./glsl/particleFrag.js";
+
+import image from "./webgl/image.js";
+import trailTexture from "./webgl/trailTexture.js";
 
 //Vars
 const sizes = {
@@ -19,26 +20,44 @@ const time = {
   value: 0,
 };
 
+let mouse = {
+  x: 0,
+  y: 0,
+};
+
+const trail = trailTexture();
+
 //Init three
 const scene = new THREE.Scene();
 
 const camera = new THREE.PerspectiveCamera(
-  75,
+  60,
   sizes.width / sizes.height,
   0.1,
-  2000
+  sizes.width + 10
 );
-camera.position.z = 3;
+
+// const camera = new THREE.OrthographicCamera(
+//   sizes.width / -2,
+//   sizes.width / 2,
+//   sizes.height / 2,
+//   sizes.height / -2,
+//   1,
+//   sizes.width + 10
+// );
+
+camera.position.z = sizes.width;
 scene.add(camera);
 
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
+
 renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.render(scene, camera);
 
-//Resize
+//Listeners
 window.addEventListener("resize", () => {
   // Update sizes
   sizes.width = window.innerWidth;
@@ -51,6 +70,12 @@ window.addEventListener("resize", () => {
   // Update renderer
   renderer.setSize(sizes.width, sizes.height);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  //mouse between -1 and 1
+  mouse.x = (e.offsetX / canvas.width) * 2 - 1;
+  mouse.y = (1 - e.offsetY / canvas.height) * 2 - 1;
 });
 
 //Utils & debug
@@ -94,7 +119,7 @@ loadingManager.onError = () => {
 const textureLoader = new THREE.TextureLoader(loadingManager);
 
 const imagesTextures = [];
-for (let i = 0; i < 11; i++) {
+for (let i = 0; i < images.length; i++) {
   imagesTextures.push(textureLoader.load(images[i]));
   imagesTextures[i].colorSpace = THREE.SRGBColorSpace;
 }
@@ -107,7 +132,7 @@ let scroll = {
 };
 canvas.addEventListener("wheel", (e) => {
   if (controls.enabled) return;
-  scroll.value -= e.deltaY;
+  scroll.value -= e.deltaY * sizes.width * 0.5;
   scroll.delta = e.deltaY;
 
   gsap.to(camera.position, {
@@ -116,143 +141,67 @@ canvas.addEventListener("wheel", (e) => {
 });
 
 //Functions
-const group = new THREE.Group();
-
-const createPlane = (x, y, texture) => {
-  const ratio = 3;
-  const geometry = new THREE.PlaneGeometry(0.566153 * ratio, 1 * ratio);
-  const material = new THREE.MeshBasicMaterial({ map: texture });
-  const uniforms = {
-    imageTexture: { value: texture },
-    scroll: scroll,
-    uTime: time,
-  };
-  const shaderMaterial = new THREE.ShaderMaterial({
-    uniforms: uniforms,
-    fragmentShader: frag(),
-    vertexShader: vert(),
-  });
-
-  const mesh = new THREE.Mesh(geometry, shaderMaterial);
-  mesh.position.x = x;
-  mesh.position.y = y;
-
-  group.add(mesh);
-};
-
-const createParticlesImage = (x, y, texture) => {
-  const width = texture.source.data.width;
-  const height = texture.source.data.height;
-  const numPoints = width * height;
-  const ratio = (width / height) * 3;
-  const multiplier = 1;
-
-  console.log(width / height);
-
-  const geometry = new THREE.InstancedBufferGeometry();
-
-  // positions
-  const positions = new THREE.BufferAttribute(new Float32Array(4 * 3), 3);
-  positions.setXYZ(0, (-ratio / 2) * multiplier, 0.5 * multiplier, 0.0);
-  positions.setXYZ(1, (ratio / 2) * multiplier, 0.5 * multiplier, 0.0);
-  positions.setXYZ(2, (-ratio / 2) * multiplier, -0.5 * multiplier, 0.0);
-  positions.setXYZ(3, (ratio / 2) * multiplier, -0.5 * multiplier, 0.0);
-  geometry.setAttribute("position", positions);
-
-  // uvs
-  const uvs = new THREE.BufferAttribute(new Float32Array(4 * 2), 2);
-  uvs.setXYZ(0, 0.0, 0.0);
-  uvs.setXYZ(1, 1.0, 0.0);
-  uvs.setXYZ(2, 0.0, 1.0);
-  uvs.setXYZ(3, 1.0, 1.0);
-  geometry.setAttribute("uv", uvs);
-
-  // index
-  geometry.setIndex(
-    new THREE.BufferAttribute(new Uint16Array([0, 2, 1, 2, 3, 1]), 1)
-  );
-
-  //Loop through pixels
-  const divider = 100000;
-  const indices = new Uint16Array(numPoints / divider);
-  const offsets = new Float32Array((numPoints * 3) / divider);
-  const angles = new Float32Array(numPoints / divider);
-
-  for (let i = 0; i < numPoints / divider; i++) {
-    offsets[i * 3 + 0] = (i % width) / divider;
-    offsets[i * 3 + 1] = Math.floor(i / width / divider);
-
-    indices[i] = i;
-
-    angles[i] = Math.random() * Math.PI;
-  }
-
-  console.log(indices);
-
-  geometry.setAttribute(
-    "pindex",
-    new THREE.InstancedBufferAttribute(indices, 1, false)
-  );
-  geometry.setAttribute(
-    "offset",
-    new THREE.InstancedBufferAttribute(offsets, 3, false)
-  );
-  geometry.setAttribute(
-    "angle",
-    new THREE.InstancedBufferAttribute(angles, 1, false)
-  );
-
-  const uniforms = {
-    uTime: { value: 0 },
-    uRandom: { value: 1.0 },
-    uDepth: { value: 2.0 },
-    uSize: { value: 0.0 },
-    uTextureSize: { value: new THREE.Vector2(width, height) },
-    uTexture: { value: texture },
-    uTouch: { value: null },
-  };
-
-  const material = new THREE.RawShaderMaterial({
-    uniforms,
-    vertexShader: particleVert(),
-    fragmentShader: particleFrag(),
-    depthTest: false,
-    transparent: true,
-    wireframe: false,
-  });
-
-  const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.x = x;
-  mesh.position.y = y;
-
-  group.add(mesh);
-};
+const imageGroup = new THREE.Group();
+const hitAreas = new THREE.Group();
 
 //Geom
 
 const createScene = () => {
   for (let i = 0; i < images.length; i++) {
     const x = i % 2 === 0 ? -1.5 : 1.5;
-    createPlane(x, -2 * i, imagesTextures[i]);
+    // createPlane(x, -2 * i, imagesTextures[i]);
+
+    const { hitArea, mesh } = image(x, -2 * i, imagesTextures[i]);
+    mesh.material.uniforms.uTouch.value = trail.texture;
+    imageGroup.add(mesh);
+    hitAreas.add(hitArea);
   }
 
-  // createParticlesImage(0, 0, imagesTextures[0]);
+  // const { hitArea, mesh } = image(1, 0, imagesTextures[0]);
 
-  scene.add(group);
+  // scene.add(hitArea);
+
+  // group.add(mesh);
+
+  // createParticlesImage(1, 0, imagesTextures[0]);
+
+  // createParticlesImage(-100, 0, imagesTextures[1]);
+
+  scene.add(imageGroup);
+  scene.add(hitAreas);
 };
 
+//Raycaster
+const raycaster = new THREE.Raycaster();
 const clock = new THREE.Clock();
 
 // gui.add(plane.position, "y", -3, 3, 0.01);
 // gui.add(planeMaterial, "wireframe");
 
+console.log(hitAreas.children);
+
 // Animation
 
 const animate = () => {
+  // imageGroup.children[0].mesh.material.uniforms;
+  raycaster.setFromCamera(mouse, camera);
+
   const elapsedTime = clock.getElapsedTime();
   time.value = elapsedTime;
 
-  requestAnimationFrame(animate);
+  const objectsToTest = hitAreas.children;
+  const intersects = raycaster.intersectObjects(objectsToTest);
+
+  for (const intersect of intersects) {
+    intersect.object.material.color.set("#0000ff");
+    trail.update(intersect.uv.x, intersect.uv.y);
+  }
+
+  for (const object of objectsToTest) {
+    if (!intersects.find((intersect) => intersect.object === object)) {
+      object.material.color.set("#ff0000");
+    }
+  }
 
   // Update objects
   // mesh.rotation.y += 0.01;
@@ -260,6 +209,7 @@ const animate = () => {
 
   // Render the scene
   renderer.render(scene, camera);
+  requestAnimationFrame(animate);
 };
 
 // Start the animation

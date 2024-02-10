@@ -9,3 +9,9 @@
 body {
     overflow: hidden;
 }
+
+#trailTexture {
+    position: absolute;
+    left: 0;
+    top: 0;
+}
