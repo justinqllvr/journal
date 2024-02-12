@@ -66,7 +66,7 @@ const image = (x, y, texture, trailTexture) => {
 
     indices[originalIndex] = originalIndex;
 
-    // angles[i] = Math.random() * Math.PI;
+    angles[i] = Math.random() * Math.PI;
   }
 
   geometry.setAttribute(
@@ -77,10 +77,10 @@ const image = (x, y, texture, trailTexture) => {
     "offset",
     new THREE.InstancedBufferAttribute(offsets, 3, false)
   );
-  // geometry.setAttribute(
-  //   "angle",
-  //   new THREE.InstancedBufferAttribute(angles, 1, false)
-  // );
+  geometry.setAttribute(
+    "angle",
+    new THREE.InstancedBufferAttribute(angles, 1, false)
+  );
 
   const uniforms = {
     uTime: { value: 0 },

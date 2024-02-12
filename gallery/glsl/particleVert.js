@@ -6,6 +6,7 @@ const particleVert = () => {
   attribute vec3 offset;      // Instance offset
   attribute vec3 position;
   attribute vec2 uv;
+  attribute float angle;
   
   uniform float uRandom;      // Randomization factor
   uniform float uTime;        // Time uniform
@@ -21,6 +22,7 @@ const particleVert = () => {
   varying vec2 vUv; 
   varying vec2 vPUv;
   varying vec3 vOffset;
+  varying float vIndex;
 
   float random(float n) {
     return fract(sin(n) * 43758.5453123);
@@ -30,15 +32,24 @@ const particleVert = () => {
     // particle uv
 	  vec2 puv = offset.xy / uTextureSize;
 	  vPUv = puv;
+    vIndex = index;
 
     //Interraction
     vec3 displaced = offset;
-    float t = texture2D(uTouch, puv).r;
-	  displaced.x += cos(2.) * t * 20.0;
-	  displaced.y += sin(1.) * t * 20.0;
+    float rand = random(index);
 
-    vec4 finalPosition = vec4(position + displaced, 1.0);
-    gl_Position = projectionMatrix * viewMatrix * modelMatrix * finalPosition;
+    float t = texture2D(uTouch, puv).r;
+	  displaced.x += cos(angle * 5.) * t * 20.0 * rand;
+	  displaced.y += sin(angle) * t * 20.0 * rand;
+
+    // vec4 displacedPosition = vec4(displaced, 1.0)
+    // vec4 finalPosition = vec4(position + displacedPostion, 1.0);
+
+    vec4 mvPosition = viewMatrix * modelMatrix * vec4(displaced, 1.0);
+	  mvPosition.xyz += position * 5.;
+	  vec4 finalPosition = projectionMatrix * mvPosition;
+
+    gl_Position = finalPosition;
 }
 
   `;

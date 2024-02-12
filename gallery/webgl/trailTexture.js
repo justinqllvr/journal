@@ -30,11 +30,11 @@ const trailTexture = () => {
   };
 
   const clear = () => {
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "rgba(0, 0, 0, .05)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
   };
 
-  return { canvas, update, texture };
+  return { canvas, update, texture, clear };
 };
 
 export default trailTexture;
