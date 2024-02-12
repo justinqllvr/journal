@@ -46,7 +46,7 @@ const camera = new THREE.PerspectiveCamera(
 //   sizes.width + 10
 // );
 
-camera.position.z = sizes.width;
+camera.position.z = sizes.width / 2;
 scene.add(camera);
 
 const renderer = new THREE.WebGLRenderer({
@@ -182,6 +182,8 @@ console.log(hitAreas.children);
 
 const animate = () => {
   // imageGroup.children[0].mesh.material.uniforms;
+  trail.clear();
+
   raycaster.setFromCamera(mouse, camera);
 
   const elapsedTime = clock.getElapsedTime();
@@ -204,8 +206,6 @@ const animate = () => {
   // Update objects
   // mesh.rotation.y += 0.01;
   // mesh.rotation.z += 0.01;
-
-  trail.update();
 
   // Render the scene
   renderer.render(scene, camera);

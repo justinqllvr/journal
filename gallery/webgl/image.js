@@ -10,6 +10,8 @@ const createHitArea = (width, height) => {
     depthTest: false,
   });
   // material.visible = false;
+  const scaleFactor = 1.1;
+  geometry.scale(scaleFactor, scaleFactor, scaleFactor);
 
   const mesh = new THREE.Mesh(geometry, material);
   return mesh;
