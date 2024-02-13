@@ -33,7 +33,7 @@ const trailTexture = () => {
       ctx.arc(
         positions[i].x * size,
         (1 - positions[i].y) * size,
-        100 * ratio,
+        40 * ratio,
         0,
         2 * Math.PI
       );

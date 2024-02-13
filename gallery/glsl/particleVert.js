@@ -30,7 +30,7 @@ const particleVert = () => {
   
   void main() {
     // particle uv
-	  vec2 puv = offset.xy / uTextureSize;
+	  vec2 puv = offset.xy / uTextureSize ;
 	  vPUv = puv;
     vIndex = index;
 
@@ -39,8 +39,8 @@ const particleVert = () => {
     float rand = random(index);
 
     float t = texture2D(uTouch, puv).r;
-	  displaced.x += cos(angle * 5.) * t * 20.0 * rand;
-	  displaced.y += sin(angle) * t * 20.0 * rand;
+	  displaced.x += cos(angle * 5.) * t * 20.0;
+	  displaced.y += sin(angle) * t * 20.0;
 
     // vec4 displacedPosition = vec4(displaced, 1.0)
     // vec4 finalPosition = vec4(position + displacedPostion, 1.0);

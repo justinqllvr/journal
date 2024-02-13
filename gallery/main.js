@@ -136,7 +136,7 @@ canvas.addEventListener("wheel", (e) => {
   scroll.delta = e.deltaY;
 
   gsap.to(camera.position, {
-    y: scroll.value / 100,
+    y: scroll.value / 500,
   });
 });
 

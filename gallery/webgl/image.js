@@ -56,20 +56,40 @@ const image = (x, y, texture, trailTexture) => {
   const offsets = new Float32Array(numParticles * 3);
   const angles = new Float32Array(numParticles);
 
-  for (let i = 0; i < numParticles; i++) {
-    const originalIndex = i;
-    const rowIndex = Math.floor(originalIndex / width);
-    const colIndex = originalIndex % width;
+  // i = height // j = width
+  for (let i = 0; i < height; i++) {
+    for (let j = 0; j < width; j++) {
+      const index = i * width + j;
 
-    // Calculer l'offset en fonction des indices de ligne et de colonne
-    offsets[originalIndex * 3 + 0] = colIndex; //X de la particule
-    offsets[originalIndex * 3 + 1] = rowIndex; //Y de la particule
-    offsets[originalIndex * 3 + 2] = 0; //Z de la particule
+      const rowIndex = j;
+      const colIndex = i;
 
-    indices[originalIndex] = originalIndex;
+      offsets[index * 3 + 0] = rowIndex; //X de la particule
+      offsets[index * 3 + 1] = colIndex; //Y de la particule
+      offsets[index * 3 + 2] = 0; //Z de la particule
 
-    angles[i] = Math.random() * Math.PI;
+      indices[index] = j;
+
+      angles[index] = Math.random() * Math.PI;
+    }
   }
+
+  // for (let i = 0; i < numParticles; i++) {
+  //   const originalIndex = i;
+  //   const rowIndex = Math.floor(originalIndex / width);
+  //   const colIndex = originalIndex % width;
+
+  //   // Calculer l'offset en fonction des indices de ligne et de colonne
+  //   offsets[originalIndex * 3 + 0] = colIndex; //X de la particule
+  //   offsets[originalIndex * 3 + 1] = rowIndex; //Y de la particule
+  //   offsets[originalIndex * 3 + 2] = 0; //Z de la particule
+
+  //   indices[originalIndex] = originalIndex;
+
+  //   angles[i] = Math.random() * Math.PI;
+  // }
+
+  console.log(offsets);
 
   geometry.setAttribute(
     "index",
@@ -83,6 +103,8 @@ const image = (x, y, texture, trailTexture) => {
     "angle",
     new THREE.InstancedBufferAttribute(angles, 1, false)
   );
+
+  console.log(new THREE.Vector2(width, height));
 
   const uniforms = {
     uTime: { value: 0 },
