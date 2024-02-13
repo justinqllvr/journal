@@ -151,19 +151,17 @@ const createScene = () => {
     const x = i % 2 === 0 ? -1.5 : 1.5;
     // createPlane(x, -2 * i, imagesTextures[i]);
 
-    // const { hitArea, mesh } = image(x, -2 * i, imagesTextures[i]);
-    // mesh.material.uniforms.uTouch.value = trail.texture;
-    // imageGroup.add(mesh);
-    // hitAreas.add(hitArea);
+    const { hitArea, mesh } = image(x, -2 * i, imagesTextures[i]);
+    mesh.material.uniforms.uTouch.value = trail.texture;
+    imageGroup.add(mesh);
+    hitAreas.add(hitArea);
   }
 
-  const { hitArea, mesh } = image(1, 0, imagesTextures[0]);
-  mesh.material.uniforms.uTouch.value = trail.texture;
-
-  hitAreas.add(hitArea);
-
-  imageGroup.add(mesh);
-  hitAreas.add(hitArea);
+  // const { hitArea, mesh } = image(1, 0, imagesTextures[0]);
+  // mesh.material.uniforms.uTouch.value = trail.texture;
+  // hitAreas.add(hitArea);
+  // imageGroup.add(mesh);
+  // hitAreas.add(hitArea);
 
   scene.add(imageGroup);
   scene.add(hitAreas);
