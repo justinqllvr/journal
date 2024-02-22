@@ -38,15 +38,23 @@ const particleVert = () => {
     vec3 displaced = offset;
     float rand = random(index);
 
+    float radius = 50.;
+
     float t = texture2D(uTouch, puv).r;
-	  displaced.x += cos(angle * 5.) * t * 20.0 * rand;
-	  displaced.y += sin(angle) * t * 20.0 * rand;
+    displaced.x += cos(angle) * radius * t;
+    displaced.y += sin(angle) * radius * t;
+
+
+
+
+	  // displaced.x += cos(angle * 5.) * t * 20.0 * rand;
+	  // displaced.y += sin(angle) * t * 20.0 * rand;
 
     // vec4 displacedPosition = vec4(displaced, 1.0)
     // vec4 finalPosition = vec4(position + displacedPostion, 1.0);
 
     vec4 mvPosition = viewMatrix * modelMatrix * vec4(displaced, 1.0);
-	  mvPosition.xyz += position * 5.;
+	  mvPosition.xyz += position * 2.;
 	  vec4 finalPosition = projectionMatrix * mvPosition;
 
     gl_Position = finalPosition;

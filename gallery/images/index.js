@@ -1,14 +1,14 @@
-import image1 from "./1.jpg";
-import image2 from "./2.jpg";
-import image3 from "./3.jpg";
-import image4 from "./4.jpg";
-import image5 from "./5.jpg";
-import image6 from "./6.jpg";
-import image7 from "./7.jpg";
-import image8 from "./8.jpg";
-import image9 from "./9.jpg";
-import image10 from "./10.jpg";
-import image11 from "./11.jpg";
+import image1 from "./resized/1.jpg";
+import image2 from "./resized/2.jpg";
+import image3 from "./resized/3.jpg";
+import image4 from "./resized/4.jpg";
+import image5 from "./resized/5.jpg";
+import image6 from "./resized/6.jpg";
+import image7 from "./resized/7.jpg";
+import image8 from "./resized/8.jpg";
+import image9 from "./resized/9.jpg";
+import image10 from "./resized/10.jpg";
+import image11 from "./resized/11.jpg";
 
 const images = [
   image1,

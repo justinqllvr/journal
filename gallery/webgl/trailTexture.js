@@ -29,16 +29,30 @@ const trailTexture = () => {
     for (let i = 0; i < positions.length; i++) {
       const ratio = (i + 1) / positions.length;
 
+      //Create a gradient
+      const gradient = ctx.createRadialGradient(
+        positions[i].x * size,
+        (1 - positions[i].y) * size,
+        0,
+        positions[i].x * size,
+        (1 - positions[i].y) * size,
+        75 * ratio
+      );
+
+      gradient.addColorStop(0, "rgba(255, 255, 255, 1)");
+      gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+      ctx.fillStyle = gradient;
+
       ctx.beginPath();
       ctx.arc(
         positions[i].x * size,
         (1 - positions[i].y) * size,
-        100 * ratio,
+        75 * ratio,
         0,
         2 * Math.PI
       );
-      ctx.fillStyle = `rgba(255, 255, 255, ${ratio})`;
-      ctx.strokeStyle = `rgba(255, 255, 255, ${ratio})`;
+      // ctx.fillStyle = `rgba(255, 255, 255, ${ratio})`;
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0})`;
       ctx.fill();
       ctx.stroke();
     }

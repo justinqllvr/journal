@@ -25,7 +25,7 @@ let mouse = {
   y: 0,
 };
 
-const trail = trailTexture();
+const trails = [];
 
 //Init three
 const scene = new THREE.Scene();
@@ -34,7 +34,7 @@ const camera = new THREE.PerspectiveCamera(
   60,
   sizes.width / sizes.height,
   0.1,
-  sizes.width + 10
+  10000
 );
 
 // const camera = new THREE.OrthographicCamera(
@@ -46,7 +46,8 @@ const camera = new THREE.PerspectiveCamera(
 //   sizes.width + 10
 // );
 
-camera.position.z = sizes.width / 2;
+// camera.position.z = 500;
+camera.position.z = sizes.width * 0.7;
 scene.add(camera);
 
 const renderer = new THREE.WebGLRenderer({
@@ -136,7 +137,7 @@ canvas.addEventListener("wheel", (e) => {
   scroll.delta = e.deltaY;
 
   gsap.to(camera.position, {
-    y: scroll.value / 100,
+    y: scroll.value / 1000,
   });
 });
 
@@ -148,22 +149,26 @@ const hitAreas = new THREE.Group();
 
 const createScene = () => {
   for (let i = 0; i < images.length; i++) {
-    const x = i % 2 === 0 ? -1.5 : 1.5;
+    const x = i % 2 === 0 ? -2 : 1;
     // createPlane(x, -2 * i, imagesTextures[i]);
 
-    // const { hitArea, mesh } = image(x, -2 * i, imagesTextures[i]);
-    // mesh.material.uniforms.uTouch.value = trail.texture;
-    // imageGroup.add(mesh);
-    // hitAreas.add(hitArea);
+    const trail = trailTexture();
+
+    const { hitArea, mesh } = image(x, -1.5 * i, imagesTextures[i]);
+    mesh.material.uniforms.uTouch.value = trail.texture;
+    imageGroup.add(mesh);
+    hitArea.index = i;
+    hitAreas.add(hitArea);
+    trails.push(trail);
   }
 
-  const { hitArea, mesh } = image(1, 0, imagesTextures[0]);
-  mesh.material.uniforms.uTouch.value = trail.texture;
+  // const { hitArea, mesh } = image(-0.5, -0.5, imagesTextures[0]);
+  // mesh.material.uniforms.uTouch.value = trail.texture;
 
-  hitAreas.add(hitArea);
+  // hitAreas.add(hitArea);
 
-  imageGroup.add(mesh);
-  hitAreas.add(hitArea);
+  // imageGroup.add(mesh);
+  // hitAreas.add(hitArea);
 
   scene.add(imageGroup);
   scene.add(hitAreas);
@@ -176,30 +181,33 @@ const clock = new THREE.Clock();
 // gui.add(plane.position, "y", -3, 3, 0.01);
 // gui.add(planeMaterial, "wireframe");
 
-console.log(hitAreas.children);
-
 // Animation
 
 const animate = () => {
   // imageGroup.children[0].mesh.material.uniforms;
-  trail.clear();
+  if (trails.length > 0) {
+    for (let i = 0; i < trails.length; i++) {
+      trails[i].clear();
+    }
+  }
 
   raycaster.setFromCamera(mouse, camera);
 
   const elapsedTime = clock.getElapsedTime();
-  time.value = elapsedTime;
+  time.value = Math.round(elapsedTime * 100);
 
   const objectsToTest = hitAreas.children;
   const intersects = raycaster.intersectObjects(objectsToTest);
 
   for (const intersect of intersects) {
-    intersect.object.material.color.set("#0000ff");
-    trail.update(intersect.uv.x, intersect.uv.y);
+    trails[intersect.object.index].update(intersect.uv.x, intersect.uv.y);
   }
 
   for (const object of objectsToTest) {
     if (!intersects.find((intersect) => intersect.object === object)) {
-      object.material.color.set("#ff0000");
+      // object.material.color.set("#ff0000");
+      // console.log(object);
+      trails[object.index].update(-10, -10);
     }
   }
 

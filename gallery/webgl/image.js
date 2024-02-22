@@ -5,8 +5,8 @@ import particleFrag from "../glsl/particleFrag.js";
 const createHitArea = (width, height) => {
   const geometry = new THREE.PlaneGeometry(width, height, 1, 1);
   const material = new THREE.MeshBasicMaterial({
-    color: 0xffffff,
-    wireframe: true,
+    color: "rgba(0,0,0,0)",
+    wireframe: false,
     depthTest: false,
   });
   // material.visible = false;
