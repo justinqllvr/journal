@@ -30,7 +30,7 @@ const particleVert = () => {
   
   void main() {
     // particle uv
-	  vec2 puv = offset.xy / uTextureSize;
+	  vec2 puv = offset.xy / uTextureSize ;
 	  vPUv = puv;
     vIndex = index;
 
